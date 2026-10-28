@@ -1,0 +1,870 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Agent Workbench</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="shell">
+      <aside class="sidebar" aria-label="主导航">
+        <div class="brand">
+          <div class="brand-mark">AW</div>
+          <div>
+            <strong>Agent Workbench</strong>
+            <span>求职作品集项目</span>
+          </div>
+        </div>
+        <nav class="nav" id="nav">
+          <button class="nav-item active" data-panel="command">控制台</button>
+          <button class="nav-item" data-panel="workflow">Agent 编排</button>
+          <button class="nav-item" data-panel="portfolio">项目简历页</button>
+          <button class="nav-item" data-panel="knowledge">知识库 Agent</button>
+          <button class="nav-item" data-panel="code">代码 Review</button>
+          <button class="nav-item" data-panel="data">数据 / SQL</button>
+          <button class="nav-item" data-panel="career">求职助手</button>
+          <button class="nav-item" data-panel="research">研究报告</button>
+          <button class="nav-item" data-panel="toolbox">超级工具箱</button>
+          <button class="nav-item" data-panel="lifehub">全能工作台</button>
+          <button class="nav-item" data-panel="apps">实用应用</button>
+          <button class="nav-item" data-panel="grades">成绩分析平台</button>
+          <button class="nav-item" data-panel="suite">综合管理套件</button>
+          <button class="nav-item" data-panel="evals">评估观测</button>
+          <button class="nav-item" data-panel="settings">设置</button>
+        </nav>
+        <div class="sidebar-card">
+          <span class="metric-label">本地能力</span>
+          <strong id="localScore">7 个 Agent</strong>
+          <small>无需后端，打开即用</small>
+        </div>
+      </aside>
+
+      <main class="main">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">多功能 AI Agent 项目</p>
+            <h1 id="pageTitle">控制台</h1>
+          </div>
+          <div class="status-strip">
+            <span id="modelStatus" class="pill ok">Local Engine</span>
+            <span id="traceCount" class="pill">0 traces</span>
+          </div>
+        </header>
+
+        <section class="panel active" id="panel-command" aria-labelledby="pageTitle">
+          <div class="quick-start">
+            <div>
+              <p class="eyebrow">Quick Start</p>
+              <h2>先点这里演示，不用自己想 prompt</h2>
+              <p class="muted">适合课堂展示、面试演示和第一次打开项目时快速理解功能。</p>
+            </div>
+            <div class="quick-actions">
+              <button class="primary" id="runDemo">一键演示完整项目</button>
+              <button id="loadEverything">载入全部示例</button>
+              <button id="openResumePage">查看简历亮点</button>
+            </div>
+          </div>
+          <div class="preset-grid" id="presetTasks"></div>
+          <div class="hero-grid">
+            <div class="workspace">
+              <div class="section-title">
+                <h2>统一指令入口</h2>
+                <span class="badge">Auto Router</span>
+              </div>
+              <textarea id="globalPrompt" class="large-input" placeholder="例如：帮我分析销售数据里哪个渠道最好，或者：根据岗位 JD 优化我的简历项目描述"></textarea>
+              <div class="toolbar">
+                <select id="agentMode" aria-label="选择 Agent">
+                  <option value="auto">自动选择</option>
+                  <option value="knowledge">知识库问答</option>
+                  <option value="code">代码审查</option>
+                  <option value="data">数据分析</option>
+                  <option value="career">求职匹配</option>
+                  <option value="research">研究报告</option>
+                </select>
+                <button class="primary" id="runGlobal">运行 Agent</button>
+                <button id="clearGlobal">清空</button>
+              </div>
+              <div class="output" id="globalOutput">
+                <p class="muted">输入任务后，这里会展示路由、推理步骤、工具调用和最终结果。</p>
+              </div>
+            </div>
+            <div class="graph-wrap">
+              <canvas id="agentGraph" width="520" height="420" aria-label="Agent 工作流图"></canvas>
+              <div class="graph-legend">
+                <span><i class="dot plan"></i>规划</span>
+                <span><i class="dot tool"></i>工具</span>
+                <span><i class="dot eval"></i>评估</span>
+              </div>
+            </div>
+          </div>
+          <div class="cards-grid" id="capabilityCards"></div>
+        </section>
+
+        <section class="panel" id="panel-workflow">
+          <div class="two-col">
+            <div class="workspace">
+              <div class="section-title">
+                <h2>Agent 编排中心</h2>
+                <span class="badge">Planner / Tools / Eval</span>
+              </div>
+              <div class="toolbar">
+                <select id="workflowScenario" aria-label="选择工作流场景">
+                  <option value="support">AI 客服工单自动化</option>
+                  <option value="knowledge">企业知识库治理</option>
+                  <option value="analytics">经营数据分析周报</option>
+                  <option value="hiring">求职投递优化</option>
+                </select>
+                <button class="primary" id="runWorkflow">运行工作流</button>
+                <button id="exportCaseStudy">导出案例</button>
+              </div>
+              <div class="workflow-board" id="workflowBoard"></div>
+            </div>
+            <div class="workspace">
+              <div class="section-title">
+                <h2>执行结果</h2>
+                <span class="badge" id="workflowScore">Ready</span>
+              </div>
+              <div class="output report" id="workflowOutput">
+                <p class="muted">选择一个业务场景，运行后会展示任务拆解、工具调用、质量评估和交付物。</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel" id="panel-portfolio">
+          <div class="two-col">
+            <div class="workspace">
+              <div class="section-title">
+                <h2>项目架构与能力证明</h2>
+                <span class="badge">Resume Ready</span>
+              </div>
+              <canvas id="architectureCanvas" width="680" height="420" aria-label="项目架构图"></canvas>
+              <div class="toolbar">
+                <button class="primary" id="generatePortfolio">生成简历材料</button>
+                <button id="copyResumeBullets">复制项目 bullets</button>
+              </div>
+            </div>
+            <div class="workspace">
+              <div class="section-title">
+                <h2>可写进简历</h2>
+                <span class="badge" id="portfolioBadge">AI Agent Platform</span>
+              </div>
+              <div class="output report" id="portfolioOutput"></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel" id="panel-knowledge">
+          <div class="grade-hero">
+            <div>
+              <p class="eyebrow">Document Knowledge Base</p>
+              <h2>文档上传 / 文本切分 / 问答引用 / 多用户权限</h2>
+              <p class="muted">支持 txt / md / csv / json 文本文件上传，自动切分片段，按用户和权限管理，多轮问答保留引用来源和历史记录。</p>
+            </div>
+            <div class="quick-actions">
+              <button class="primary" id="kbQuickDemo">一键演示知识库</button>
+              <button id="kbDeploymentGuide">云部署说明</button>
+            </div>
+          </div>
+          <div class="grade-layout">
+            <div class="workspace">
+              <div class="section-title">
+                <h2>登录与权限模拟</h2>
+                <span class="badge" id="currentUserBadge">guest</span>
+              </div>
+              <div class="toolbar">
+                <select id="kbUserSelect" aria-label="选择用户">
+                  <option value="admin">管理员 admin</option>
+                  <option value="teacher">教师 teacher</option>
+                  <option value="student">学生 student</option>
+                  <option value="guest">访客 guest</option>
+                </select>
+                <input id="kbLoginName" placeholder="或输入新用户名" />
+                <select id="kbRoleSelect" aria-label="角色">
+                  <option value="admin">管理员</option>
+                  <option value="editor">编辑者</option>
+                  <option value="viewer">只读用户</option>
+                </select>
+                <button id="kbLogin">登录/切换</button>
+              </div>
+              <div class="output" id="kbPermissionInfo"></div>
+            </div>
+            <div class="workspace">
+              <div class="section-title">
+                <h2>文件上传与切分</h2>
+                <span class="badge" id="chunkCount">0 chunks</span>
+              </div>
+              <div class="toolbar">
+                <input id="kbFileInput" type="file" multiple accept=".txt,.md,.csv,.json,.html,.js,.css" />
+                <select id="docVisibility" aria-label="文档权限">
+                  <option value="private">仅当前用户</option>
+                  <option value="team">团队可见</option>
+                  <option value="public">所有人可见</option>
+                </select>
+                <input id="chunkSizeInput" type="number" min="120" max="2000" value="500" placeholder="切分长度" />
+                <button id="uploadDocs">上传并切分</button>
+              </div>
+              <div class="output" id="chunkPreview"></div>
+            </div>
+          </div>
+          <div class="two-col">
+            <div class="workspace">
+              <div class="section-title">
+                <h2>知识库问答</h2>
+                <span class="badge">RAG + 引用</span>
+              </div>
+              <textarea id="docInput" class="medium-input" placeholder="粘贴文档内容，点击加入知识库"></textarea>
+              <div class="toolbar">
+                <input id="docTitle" placeholder="文档标题" />
+                <button id="addDoc">加入知识库</button>
+                <button id="loadSamples">载入示例文档</button>
+              </div>
+              <textarea id="kbQuestion" class="small-input" placeholder="问一个和知识库有关的问题"></textarea>
+              <div class="toolbar">
+                <button class="primary" id="askKb">检索并回答</button>
+                <button id="resetKb">重置知识库</button>
+              </div>
+              <div class="output" id="kbOutput"></div>
+              <div class="section-title" style="margin-top:14px">
+                <h2>问答历史</h2>
+                <span class="badge" id="qaHistoryCount">0 history</span>
+              </div>
+              <div class="trace-list" id="qaHistoryList"></div>
+            </div>
+            <div class="workspace">
+              <div class="section-title">
+                <h2>文档库</h2>
+                <span class="badge" id="docCount">0 docs</span>
+              </div>
+              <div id="docList" class="doc-list"></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel" id="panel-code">
+          <div class="two-col">
+            <div class="workspace">
+              <div class="section-title">
+                <h2>代码 Review Agent</h2>
+                <span class="badge">Diff / Code</span>
+              </div>
+              <textarea id="codeInput" class="code-input" spellcheck="false"></textarea>
+              <div class="toolbar">
+                <button class="primary" id="reviewCode">开始 Review</button>
+                <button id="loadCodeSample">示例代码</button>
+              </div>
+            </div>
+            <div class="workspace">
+              <div class="section-title">
+                <h2>审查结果</h2>
+                <span class="badge" id="issueCount">0 issues</span>
+              </div>
+              <div class="output" id="codeOutput"></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel" id="panel-data">
+          <div class="two-col">
+            <div class="workspace">
+              <div class="section-title">
+                <h2>数据分析 Agent</h2>
+                <span class="badge">CSV + NL Query</span>
+              </div>
+              <textarea id="csvInput" class="code-input" spellcheck="false"></textarea>
+              <div class="toolbar">
+                <input id="dataQuestion" placeholder="例如：按渠道汇总收入并排序" />
+                <button class="primary" id="analyzeData">分析</button>
+                <button id="loadCsvSample">示例数据</button>
+              </div>
+              <div class="output" id="dataOutput"></div>
+            </div>
+            <div class="workspace">
+              <div class="section-title">
+                <h2>可视化</h2>
+                <span class="badge" id="rowCount">0 rows</span>
+              </div>
+              <canvas id="chartCanvas" width="640" height="360" aria-label="数据图表"></canvas>
+              <div id="tableOutput" class="table-wrap"></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel" id="panel-career">
+          <div class="two-col">
+            <div class="workspace">
+              <div class="section-title">
+                <h2>简历 / JD 匹配</h2>
+                <span class="badge">ATS + 项目包装</span>
+              </div>
+              <textarea id="resumeInput" class="medium-input" placeholder="粘贴你的简历或项目经历"></textarea>
+              <textarea id="jdInput" class="medium-input" placeholder="粘贴目标岗位 JD"></textarea>
+              <div class="toolbar">
+                <button class="primary" id="matchJob">生成匹配报告</button>
+                <button id="loadCareerSample">示例</button>
+              </div>
+            </div>
+            <div class="workspace">
+              <div class="section-title">
+                <h2>求职建议</h2>
+                <span class="badge" id="matchScore">0%</span>
+              </div>
+              <div class="output" id="careerOutput"></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel" id="panel-research">
+          <div class="workspace">
+            <div class="section-title">
+              <h2>市场研究报告 Agent</h2>
+              <span class="badge">Planner + Fact Table</span>
+            </div>
+            <div class="toolbar">
+              <input id="researchTopic" placeholder="研究主题，例如：AI Agent 在客服领域的落地机会" />
+              <select id="reportStyle" aria-label="报告类型">
+                <option value="startup">创业/产品视角</option>
+                <option value="job">求职项目视角</option>
+                <option value="tech">技术架构视角</option>
+              </select>
+              <button class="primary" id="makeReport">生成报告</button>
+            </div>
+            <div class="output report" id="researchOutput"></div>
+          </div>
+        </section>
+
+        <section class="panel" id="panel-toolbox">
+          <div class="two-col">
+            <div class="workspace">
+              <div class="section-title">
+                <h2>超级工具箱</h2>
+                <span class="badge">12 个实用 Agent</span>
+              </div>
+              <div class="toolbox-grid" id="toolboxGrid"></div>
+            </div>
+            <div class="workspace">
+              <div class="section-title">
+                <h2 id="toolboxTitle">选择一个工具</h2>
+                <span class="badge" id="toolboxBadge">Ready</span>
+              </div>
+              <textarea id="toolboxInput" class="medium-input" placeholder="选择左侧工具后，这里会自动填入示例，也可以改成自己的内容"></textarea>
+              <div class="toolbar">
+                <button class="primary" id="runToolbox">运行工具</button>
+                <button id="loadToolboxSample">载入示例</button>
+                <button id="runToolboxSuite">生成完整项目包</button>
+              </div>
+              <div class="output report" id="toolboxOutput">
+                <p class="muted">这里适合生成项目文档、面试材料、课程报告、产品设计、测试用例和学习计划。</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel" id="panel-lifehub">
+          <div class="workspace">
+            <div class="section-title">
+              <h2>全能工作台</h2>
+              <span class="badge">生活 / 生产 / 求职 / 学习</span>
+            </div>
+            <div class="hub-layout">
+              <div>
+                <div class="hub-tabs" id="hubTabs"></div>
+                <div class="hub-tools" id="hubTools"></div>
+              </div>
+              <div class="hub-runner">
+                <div class="section-title">
+                  <h2 id="hubTitle">选择一个功能</h2>
+                  <span class="badge" id="hubBadge">Ready</span>
+                </div>
+                <textarea id="hubInput" class="medium-input" placeholder="选择功能后会自动载入示例，也可以粘贴自己的内容"></textarea>
+                <div class="toolbar">
+                  <button class="primary" id="runHubTool">运行功能</button>
+                  <button id="loadHubSample">载入示例</button>
+                  <button id="runHubSuite">一键生成生活/学习/求职方案</button>
+                </div>
+                <div class="output report" id="hubOutput">
+                  <p class="muted">这里整合数据记录、数据分析、预测、文档生成、文档总结、续写、求职资料、网页信息整合、学习计划和生活管理。</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="two-col hub-extra">
+            <div class="workspace">
+              <div class="section-title">
+                <h2>数据记录与分析</h2>
+                <span class="badge" id="lifeDataCount">0 rows</span>
+              </div>
+              <div class="toolbar">
+                <input id="lifeDate" type="date" />
+                <input id="lifeMetric" placeholder="指标，例如 学习时长" />
+                <input id="lifeValue" type="number" placeholder="数值" />
+                <button id="addLifeData">记录</button>
+                <button id="loadLifeData">示例数据</button>
+              </div>
+              <div class="toolbar">
+                <button class="primary" id="analyzeLifeData">分析和预测</button>
+                <button id="clearLifeData">清空记录</button>
+              </div>
+              <div id="lifeTable" class="table-wrap"></div>
+            </div>
+            <div class="workspace">
+              <div class="section-title">
+                <h2>趋势可视化</h2>
+                <span class="badge">Forecast</span>
+              </div>
+              <canvas id="lifeChart" width="640" height="360" aria-label="生活数据趋势图"></canvas>
+              <div class="output" id="lifeAnalysis">
+                <p class="muted">添加或载入数据后，可以生成趋势图、均值、变化率和下一期预测。</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel" id="panel-apps">
+          <div class="cards-grid app-metrics">
+            <div class="metric-card">
+              <span>待办任务</span>
+              <strong id="dashTasks">0</strong>
+            </div>
+            <div class="metric-card">
+              <span>今日打卡</span>
+              <strong id="dashHabits">0%</strong>
+            </div>
+            <div class="metric-card">
+              <span>本月结余</span>
+              <strong id="dashBalance">0</strong>
+            </div>
+          </div>
+
+          <div class="apps-grid">
+            <div class="workspace">
+              <div class="section-title">
+                <h2>任务看板</h2>
+                <span class="badge">Kanban</span>
+              </div>
+              <div class="toolbar">
+                <input id="taskTitle" placeholder="新任务，例如 完成项目演示视频" />
+                <select id="taskStatus" aria-label="任务状态">
+                  <option value="todo">待办</option>
+                  <option value="doing">进行中</option>
+                  <option value="done">已完成</option>
+                </select>
+                <button id="addTask">添加</button>
+              </div>
+              <div class="kanban" id="kanbanBoard"></div>
+            </div>
+
+            <div class="workspace">
+              <div class="section-title">
+                <h2>习惯打卡</h2>
+                <span class="badge">Habits</span>
+              </div>
+              <div class="toolbar">
+                <input id="habitName" placeholder="习惯，例如 背单词" />
+                <button id="addHabit">添加习惯</button>
+                <button id="loadHabitSample">示例</button>
+              </div>
+              <div id="habitList" class="habit-list"></div>
+            </div>
+
+            <div class="workspace">
+              <div class="section-title">
+                <h2>收支记录</h2>
+                <span class="badge">Budget</span>
+              </div>
+              <div class="toolbar">
+                <select id="moneyType" aria-label="收支类型">
+                  <option value="expense">支出</option>
+                  <option value="income">收入</option>
+                </select>
+                <input id="moneyCategory" placeholder="分类，例如 餐饮" />
+                <input id="moneyAmount" type="number" placeholder="金额" />
+                <button id="addMoney">记录</button>
+              </div>
+              <div class="toolbar">
+                <button id="loadMoneySample">示例账本</button>
+                <button id="clearMoney">清空账本</button>
+              </div>
+              <div id="moneyOutput" class="output"></div>
+            </div>
+
+            <div class="workspace">
+              <div class="section-title">
+                <h2>目标进度</h2>
+                <span class="badge">Goals</span>
+              </div>
+              <div class="toolbar">
+                <input id="goalName" placeholder="目标，例如 完成项目" />
+                <input id="goalValue" type="number" placeholder="进度 0-100" />
+                <button id="addGoal">保存</button>
+              </div>
+              <div id="goalList" class="goal-list"></div>
+            </div>
+
+            <div class="workspace wide">
+              <div class="section-title">
+                <h2>Markdown 笔记</h2>
+                <span class="badge">Editor</span>
+              </div>
+              <div class="editor-grid">
+                <textarea id="markdownInput" class="medium-input" placeholder="# 标题&#10;写点笔记，右侧会预览"></textarea>
+                <div id="markdownPreview" class="output report"></div>
+              </div>
+              <div class="toolbar">
+                <button id="loadMarkdownSample">示例笔记</button>
+                <button id="saveMarkdown">保存笔记</button>
+                <button id="clearMarkdown">清空</button>
+              </div>
+            </div>
+
+            <div class="workspace">
+              <div class="section-title">
+                <h2>番茄钟</h2>
+                <span class="badge" id="timerMode">Focus</span>
+              </div>
+              <div class="timer-face" id="timerFace">25:00</div>
+              <div class="toolbar">
+                <button class="primary" id="startTimer">开始</button>
+                <button id="pauseTimer">暂停</button>
+                <button id="resetTimer">重置</button>
+              </div>
+            </div>
+
+            <div class="workspace">
+              <div class="section-title">
+                <h2>JSON / CSV 工具</h2>
+                <span class="badge">Formatter</span>
+              </div>
+              <textarea id="formatInput" class="medium-input" placeholder='粘贴 JSON 或 CSV，例如 {"name":"demo","score":95}'></textarea>
+              <div class="toolbar">
+                <button id="formatJson">格式化 JSON</button>
+                <button id="csvToTable">CSV 转表格</button>
+              </div>
+              <div id="formatOutput" class="output"></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel" id="panel-grades">
+          <div class="grade-hero">
+            <div>
+              <p class="eyebrow" data-i18n="gradeEyebrow">Advanced Analytics</p>
+              <h2 data-i18n="gradeTitle">成绩 / 班级 / 课程综合分析平台</h2>
+              <p class="muted" data-i18n="gradeIntro">支持上万学生模拟数据、自定义课程、自定义权重、多图表对比、历史记录和 Excel 友好导出。</p>
+            </div>
+            <div class="quick-actions">
+              <button class="primary" id="gradeOneClick" data-i18n="oneClickAnalysis">一键生成样例并分析</button>
+              <button id="gradeHelpBtn" data-i18n="helpGuide">新手引导</button>
+              <button id="gradeExportCsv" data-i18n="exportCsv">导出 CSV</button>
+            </div>
+          </div>
+
+          <div class="grade-help" id="gradeHelp">
+            <strong>怎么用：</strong>
+            <span>1. 选择人数、班级数、课程和记分项目；2. 点击“一键生成样例并分析”；3. 切换图表和对比维度；4. 保存历史或导出 CSV。</span>
+          </div>
+
+          <div class="grade-layout">
+            <div class="workspace">
+              <div class="section-title">
+                <h2 data-i18n="configPanel">配置面板</h2>
+                <span class="badge">Config</span>
+              </div>
+              <div class="settings-grid compact">
+                <label>人数
+                  <input id="gradeStudentCount" type="number" min="10" max="20000" value="1000" />
+                </label>
+                <label>班级数
+                  <input id="gradeClassCount" type="number" min="1" max="100" value="8" />
+                </label>
+                <label>课程名称
+                  <input id="gradeSubjects" value="语文,数学,英语,高等数学,线性代数,概率论与数理统计,程序设计,大学物理" />
+                </label>
+                <label>记分项目
+                  <input id="gradeItems" value="平时分,作业分,期中考,期末考" />
+                </label>
+                <label>权重
+                  <input id="gradeWeights" value="20,20,25,35" />
+                </label>
+                <label>对比维度
+                  <select id="gradeCompareMode">
+                    <option value="class">按班级对比</option>
+                    <option value="subject">按课程对比</option>
+                    <option value="item">按记分项目对比</option>
+                    <option value="rank">排名分布</option>
+                  </select>
+                </label>
+                <label>图表类型
+                  <select id="gradeChartType">
+                    <option value="bar">条形图</option>
+                    <option value="column">柱状图</option>
+                    <option value="line">折线图</option>
+                    <option value="pie">饼图</option>
+                    <option value="radar">雷达图</option>
+                    <option value="heatmap">热力图</option>
+                  </select>
+                </label>
+                <label>界面主题
+                  <select id="uiTheme">
+                    <option value="dark">深色专业</option>
+                    <option value="light">浅色清爽</option>
+                    <option value="contrast">高对比</option>
+                  </select>
+                </label>
+                <label>布局密度
+                  <select id="uiDensity">
+                    <option value="normal">标准</option>
+                    <option value="compact">紧凑</option>
+                    <option value="spacious">宽松</option>
+                  </select>
+                </label>
+                <label>语言
+                  <select id="languageSelect">
+                    <option value="zh">中文</option>
+                    <option value="en">English</option>
+                  </select>
+                </label>
+              </div>
+              <div class="toolbar">
+                <button class="primary" id="generateGradeData">生成数据</button>
+                <button id="analyzeGrades">一键分析</button>
+                <button id="saveGradeHistory">保存历史</button>
+                <button id="clearGradeHistory">清空历史</button>
+              </div>
+              <div class="toolbar">
+                <label class="toggle-row"><input id="exportStudents" type="checkbox" checked />学生明细</label>
+                <label class="toggle-row"><input id="exportSummary" type="checkbox" checked />汇总分析</label>
+                <label class="toggle-row"><input id="exportHistory" type="checkbox" />历史记录</label>
+              </div>
+            </div>
+
+            <div class="workspace">
+              <div class="section-title">
+                <h2>关键指标</h2>
+                <span class="badge" id="gradeDataSize">0 students</span>
+              </div>
+              <div class="grade-kpis">
+                <div class="metric-card"><span>总人数</span><strong id="kpiStudents">0</strong></div>
+                <div class="metric-card"><span>课程数</span><strong id="kpiSubjects">0</strong></div>
+                <div class="metric-card"><span>平均分</span><strong id="kpiAverage">0</strong></div>
+                <div class="metric-card"><span>及格率</span><strong id="kpiPassRate">0%</strong></div>
+              </div>
+              <div class="output" id="gradeInsight">
+                <p class="muted">点击“一键生成样例并分析”后，这里会显示自动分析结论。</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="grade-chart-grid">
+            <div class="workspace wide">
+              <div class="section-title">
+                <h2>主图表</h2>
+                <span class="badge" id="activeChartLabel">bar</span>
+              </div>
+              <canvas id="gradeChart" width="960" height="460" aria-label="成绩分析图表"></canvas>
+            </div>
+            <div class="workspace">
+              <div class="section-title">
+                <h2>多图表预览</h2>
+                <span class="badge">Gallery</span>
+              </div>
+              <div class="mini-chart-grid">
+                <canvas id="gradeMiniBar" width="300" height="180"></canvas>
+                <canvas id="gradeMiniPie" width="300" height="180"></canvas>
+                <canvas id="gradeMiniLine" width="300" height="180"></canvas>
+                <canvas id="gradeMiniHeat" width="300" height="180"></canvas>
+              </div>
+            </div>
+          </div>
+
+          <div class="two-col">
+            <div class="workspace">
+              <div class="section-title">
+                <h2>分析表格</h2>
+                <span class="badge">Table</span>
+              </div>
+              <div id="gradeTable" class="table-wrap"></div>
+            </div>
+            <div class="workspace">
+              <div class="section-title">
+                <h2>历史记录对比</h2>
+                <span class="badge" id="historyCount">0 records</span>
+              </div>
+              <div id="gradeHistoryList" class="trace-list"></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel" id="panel-suite">
+          <div class="grade-hero">
+            <div>
+              <p class="eyebrow">Enterprise Suite</p>
+              <h2>综合管理套件</h2>
+              <p class="muted">集成 CRM、库存、项目、日历、自动化、报表、备份、安全审计和 API Mock，适合展示大型系统设计能力。</p>
+            </div>
+            <div class="quick-actions">
+              <button class="primary" id="suiteDemo">一键生成业务样例</button>
+              <button id="suiteReport">生成经营报告</button>
+              <button id="suiteBackup">导出备份</button>
+            </div>
+          </div>
+
+          <div class="cards-grid app-metrics">
+            <div class="metric-card"><span>客户数</span><strong id="suiteCustomers">0</strong></div>
+            <div class="metric-card"><span>库存预警</span><strong id="suiteLowStock">0</strong></div>
+            <div class="metric-card"><span>项目进度</span><strong id="suiteProgress">0%</strong></div>
+          </div>
+
+          <div class="apps-grid">
+            <div class="workspace">
+              <div class="section-title"><h2>CRM 客户管理</h2><span class="badge">CRM</span></div>
+              <div class="toolbar">
+                <input id="crmName" placeholder="客户名称" />
+                <select id="crmStage">
+                  <option value="线索">线索</option>
+                  <option value="沟通中">沟通中</option>
+                  <option value="已成交">已成交</option>
+                  <option value="流失">流失</option>
+                </select>
+                <input id="crmValue" type="number" placeholder="预计金额" />
+                <button id="addCrm">添加客户</button>
+              </div>
+              <div id="crmList" class="trace-list"></div>
+            </div>
+
+            <div class="workspace">
+              <div class="section-title"><h2>库存管理</h2><span class="badge">Inventory</span></div>
+              <div class="toolbar">
+                <input id="stockName" placeholder="物品名称" />
+                <input id="stockQty" type="number" placeholder="数量" />
+                <input id="stockMin" type="number" placeholder="预警线" />
+                <button id="addStock">添加库存</button>
+              </div>
+              <div id="stockList" class="trace-list"></div>
+            </div>
+
+            <div class="workspace">
+              <div class="section-title"><h2>项目里程碑</h2><span class="badge">Project</span></div>
+              <div class="toolbar">
+                <input id="milestoneName" placeholder="里程碑，例如 完成测试" />
+                <input id="milestoneProgress" type="number" placeholder="进度 0-100" />
+                <button id="addMilestone">添加</button>
+              </div>
+              <div id="milestoneList" class="goal-list"></div>
+            </div>
+
+            <div class="workspace">
+              <div class="section-title"><h2>日历事件</h2><span class="badge">Calendar</span></div>
+              <div class="toolbar">
+                <input id="eventDate" type="date" />
+                <input id="eventTitle" placeholder="事件标题" />
+                <button id="addEvent">添加事件</button>
+              </div>
+              <div id="eventList" class="trace-list"></div>
+            </div>
+
+            <div class="workspace">
+              <div class="section-title"><h2>自动化规则</h2><span class="badge">Automation</span></div>
+              <div class="toolbar">
+                <select id="ruleType">
+                  <option value="stock">库存低于预警线</option>
+                  <option value="crm">客户金额超过阈值</option>
+                  <option value="project">项目进度低于阈值</option>
+                </select>
+                <input id="ruleThreshold" type="number" placeholder="阈值" />
+                <button id="runRules">运行规则</button>
+              </div>
+              <div id="ruleOutput" class="output"></div>
+            </div>
+
+            <div class="workspace">
+              <div class="section-title"><h2>安全审计</h2><span class="badge">Audit</span></div>
+              <div class="toolbar">
+                <button id="runAudit">运行审计</button>
+                <button id="clearAudit">清空审计</button>
+              </div>
+              <div id="auditList" class="trace-list"></div>
+            </div>
+
+            <div class="workspace wide">
+              <div class="section-title"><h2>经营报表与 API Mock</h2><span class="badge">Report / API</span></div>
+              <div class="editor-grid">
+                <div class="output report" id="suiteReportOutput"></div>
+                <div class="output" id="apiMockOutput"></div>
+              </div>
+              <div class="toolbar">
+                <button id="suiteApiMock">生成 API Mock</button>
+                <button id="suiteRestore">从备份文本恢复</button>
+              </div>
+              <textarea id="suiteBackupInput" class="small-input" placeholder="粘贴备份 JSON 后点击恢复"></textarea>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel" id="panel-evals">
+          <div class="cards-grid">
+            <div class="metric-card">
+              <span>平均置信度</span>
+              <strong id="avgConfidence">0%</strong>
+            </div>
+            <div class="metric-card">
+              <span>平均延迟</span>
+              <strong id="avgLatency">0 ms</strong>
+            </div>
+            <div class="metric-card">
+              <span>工具调用</span>
+              <strong id="toolCalls">0</strong>
+            </div>
+          </div>
+          <div class="workspace">
+            <div class="section-title">
+              <h2>Trace 日志</h2>
+              <span class="badge">Observability</span>
+            </div>
+            <div class="toolbar">
+              <button id="runSmoke">运行自检</button>
+              <button id="exportTraces">导出 Trace</button>
+              <button id="clearTraces">清空 Trace</button>
+            </div>
+            <div id="traceList" class="trace-list"></div>
+          </div>
+        </section>
+
+        <section class="panel" id="panel-settings">
+          <div class="workspace">
+            <div class="section-title">
+              <h2>设置</h2>
+              <span class="badge">Local First</span>
+            </div>
+            <div class="settings-grid">
+              <label>
+                OpenAI API Key
+                <input id="apiKey" type="password" placeholder="可选：仅保存在本机浏览器" autocomplete="off" />
+              </label>
+              <label>
+                模型
+                <input id="modelName" placeholder="gpt-4.1-mini" />
+              </label>
+              <label class="toggle-row">
+                <input id="useRemote" type="checkbox" />
+                <span>有 API Key 时优先调用远程模型</span>
+              </label>
+            </div>
+            <div class="toolbar">
+              <button class="primary" id="saveSettings">保存设置</button>
+              <button id="wipeData">清除本地数据</button>
+            </div>
+            <div class="output">
+              <p>这个项目默认使用本地算法完成检索、分析、Review 和报告生成。配置 API Key 后，统一控制台会尝试调用 OpenAI Responses API；失败时自动回退到本地引擎。</p>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <script src="./app.js"></script>
+  </body>
+</html>
