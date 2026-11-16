@@ -146,8 +146,8 @@ const presetTasks = [
     prompt: "按渠道汇总收入并排序，指出哪个渠道最值得投入。",
   },
   {
-    title: "演示求职包装",
-    desc: "生成能写进简历的项目亮点",
+    title: "演示材料生成",
+    desc: "生成项目的展示亮点材料",
     agent: "career",
     prompt: samples.jd,
   },
@@ -170,10 +170,10 @@ const presetTasks = [
     prompt: "查看系统运行记录",
   },
   {
-    title: "项目写进简历",
-    desc: "查看项目名称、技术栈和 bullets",
+    title: "项目材料一览",
+    desc: "查看项目名称、技术栈和功能说明",
     agent: "portfolio",
-    prompt: "生成这个项目的简历材料",
+    prompt: "生成这个项目的项目说明材料",
   },
   {
     title: "打开超级工具箱",
